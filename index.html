@@ -2,35 +2,179 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Futsal Control</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080808;color:white;font-family:Arial,sans-serif}
-header{padding:16px;text-align:center;background:#151515;border-bottom:2px solid #d9aa32}
-h1{margin:0;color:#e5b638}
-.logo{font-size:42px}
-.container{padding:12px;max-width:600px;margin:auto}
-.card{background:#151515;border-radius:14px;padding:14px;margin-bottom:12px}
-label{display:block;color:#aaa;font-size:13px;margin-bottom:5px}
-input{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#222;color:white;font-size:16px}
-button{border:0;border-radius:10px;padding:13px 15px;font-weight:bold;font-size:15px;cursor:pointer}
+body{
+ margin:0;
+ background:#080808;
+ color:#fff;
+ font-family:Arial,sans-serif;
+ padding-bottom:30px
+}
+header{
+ padding:15px;
+ text-align:center;
+ background:#151515;
+ border-bottom:2px solid #d9aa32
+}
+.logo{font-size:40px}
+h1{margin:0;color:#e5b638;font-size:26px}
+.small{font-size:12px;color:#999}
+.container{padding:10px;max-width:650px;margin:auto}
+.card{
+ background:#151515;
+ border-radius:15px;
+ padding:14px;
+ margin-bottom:12px;
+ box-shadow:0 2px 8px #000
+}
+h3{margin:4px 0 12px;color:#e5b638}
+label{
+ display:block;
+ color:#aaa;
+ font-size:13px;
+ margin-bottom:5px
+}
+input{
+ width:100%;
+ padding:12px;
+ border-radius:9px;
+ border:1px solid #444;
+ background:#222;
+ color:white;
+ font-size:16px
+}
+button{
+ border:0;
+ border-radius:10px;
+ padding:12px 14px;
+ font-weight:bold;
+ font-size:14px;
+ cursor:pointer;
+ touch-action:manipulation
+}
 .gold{background:#e5b638;color:#111}
-.red{background:#a51e2b;color:white}
-.blue{background:#1769aa;color:white}
-.dark{background:#292929;color:white}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+.red{background:#a51e2b;color:#fff}
+.blue{background:#1769aa;color:#fff}
+.dark{background:#292929;color:#fff}
+.row{
+ display:flex;
+ gap:7px;
+ flex-wrap:wrap
+}
 .row>*{flex:1}
-.score{display:flex;justify-content:space-around;text-align:center;align-items:center}
-.team{font-size:17px;font-weight:bold}
-.goals{font-size:55px;font-weight:900}
-.clock{text-align:center;font-size:64px;font-weight:900;color:#e5b638;margin:5px}
-.center{text-align:center}
-.stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #333}
-.event{padding:8px;background:#222;border-radius:8px;margin:5px 0}
-.player{display:flex;justify-content:space-between;align-items:center;background:#222;padding:10px;border-radius:9px;margin:5px 0}
-.badge{background:#e5b638;color:#111;border-radius:50%;padding:5px 8px;font-weight:bold}
-.small{font-size:12px;color:#aaa}
+.score{
+ display:flex;
+ justify-content:space-around;
+ align-items:center;
+ text-align:center;
+ gap:8px
+}
+.team{
+ font-size:16px;
+ font-weight:bold;
+ min-height:20px
+}
+.goals{
+ font-size:58px;
+ font-weight:900;
+ line-height:1.1;
+ margin:3px
+}
+.clock{
+ text-align:center;
+ font-size:64px;
+ font-weight:900;
+ color:#e5b638;
+ margin:5px
+}
+.goalButtons{
+ display:flex;
+ gap:5px
+}
+.goalButtons button{flex:1}
+.stat{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:10px 0;
+ border-bottom:1px solid #333
+}
+.stat:last-child{border-bottom:0}
+.counter{
+ display:flex;
+ align-items:center;
+ gap:7px
+}
+.counter span{
+ min-width:28px;
+ text-align:center;
+ font-size:25px;
+ font-weight:bold
+}
+.foulBox{
+ padding:12px;
+ border-radius:10px;
+ background:#222;
+ margin-bottom:8px
+}
+.foulBox.warning{
+ background:#5b4300;
+ border:2px solid #e5b638
+}
+.foulBox.danger{
+ background:#651b22;
+ border:2px solid #e53945
+}
+.foulNumber{
+ font-size:30px;
+ font-weight:900
+}
+.warningText{
+ font-size:12px;
+ font-weight:bold;
+ color:#ffd75c;
+ margin-top:3px
+}
+.event{
+ padding:9px;
+ background:#222;
+ border-radius:8px;
+ margin:5px 0;
+ font-size:14px
+}
+.player{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ background:#222;
+ padding:9px;
+ border-radius:9px;
+ margin:5px 0
+}
+.badge{
+ display:inline-block;
+ background:#e5b638;
+ color:#111;
+ border-radius:50%;
+ padding:5px 8px;
+ font-weight:bold;
+ margin-right:6px
+}
+.empty{
+ color:#777;
+ text-align:center;
+ padding:8px
+}
+@media(max-width:450px){
+ .clock{font-size:55px}
+ .goals{font-size:48px}
+ button{padding:11px 9px;font-size:13px}
+ .team{font-size:14px}
+}
 </style>
 </head>
 
@@ -44,196 +188,543 @@ button{border:0;border-radius:10px;padding:13px 15px;font-weight:bold;font-size:
 
 <div class="container">
 
+<!-- CONFIGURACIÓN -->
 <div class="card">
+<h3>🏟️ PARTIDO</h3>
+
 <label>Tu equipo</label>
 <input id="homeName" value="CIEZA FS">
+
 <br><br>
+
 <label>Rival</label>
 <input id="awayName" value="RIVAL">
+
 <br><br>
-<button class="gold" style="width:100%" onclick="startMatch()">EMPEZAR PARTIDO</button>
+
+<button class="gold" style="width:100%" onclick="startMatch()">
+▶ EMPEZAR PARTIDO
+</button>
 </div>
 
+
+<!-- MARCADOR -->
 <div class="card">
+
 <div class="clock" id="clock">20:00</div>
 
 <div class="score">
-<div>
+
+<div style="flex:1">
 <div class="team" id="homeTitle">CIEZA FS</div>
 <div class="goals" id="homeGoals">0</div>
+
+<div class="goalButtons">
 <button class="gold" onclick="goal(1)">⚽ GOL</button>
+<button class="dark" onclick="removeGoal(1)">−</button>
+</div>
 </div>
 
 <div style="font-size:25px">—</div>
 
-<div>
+<div style="flex:1">
 <div class="team" id="awayTitle">RIVAL</div>
 <div class="goals" id="awayGoals">0</div>
+
+<div class="goalButtons">
 <button class="red" onclick="goal(0)">⚽ GOL</button>
+<button class="dark" onclick="removeGoal(0)">−</button>
 </div>
+</div>
+
 </div>
 
 <br>
 
 <div class="row">
-<button class="blue" onclick="toggleClock()" id="clockBtn">▶ INICIAR</button>
+<button class="blue" id="clockBtn" onclick="toggleClock()">▶ INICIAR</button>
 <button class="dark" onclick="resetClock()">↺ REINICIAR</button>
 </div>
+
 </div>
 
-<div class="card">
-<h3>🚨 FALTAS</h3>
 
+<!-- FALTAS -->
+<div class="card">
+
+<h3>🚨 FALTAS ACUMULADAS</h3>
+
+<div id="homeFoulBox" class="foulBox">
 <div class="stat">
 <b id="homeTitle2">CIEZA FS</b>
-<div>
-<button class="dark" onclick="foul(1)">−</button>
-<span id="homeFouls" style="font-size:24px;margin:10px">0</span>
-<button class="gold" onclick="foul(1)">+1</button>
+
+<div class="counter">
+<button class="dark" onclick="foul(1,-1)">−</button>
+<span id="homeFouls">0</span>
+<button class="gold" onclick="foul(1,1)">+</button>
 </div>
 </div>
 
+<div id="homeWarning" class="warningText"></div>
+</div>
+
+
+<div id="awayFoulBox" class="foulBox">
 <div class="stat">
 <b id="awayTitle2">RIVAL</b>
-<div>
-<button class="dark" onclick="foul(0)">−</button>
-<span id="awayFouls" style="font-size:24px;margin:10px">0</span>
-<button class="red" onclick="foul(0)">+1</button>
-</div>
+
+<div class="counter">
+<button class="dark" onclick="foul(0,-1)">−</button>
+<span id="awayFouls">0</span>
+<button class="red" onclick="foul(0,1)">+</button>
 </div>
 </div>
 
+<div id="awayWarning" class="warningText"></div>
+</div>
+
+</div>
+
+
+<!-- TARJETAS -->
 <div class="card">
+
 <h3>🟨🟥 TARJETAS</h3>
 
 <div class="stat">
 <b id="cardHomeName">CIEZA FS</b>
-<div>
-<button class="gold" onclick="card(1,'🟨')">🟨</button>
-<button class="red" onclick="card(1,'🟥')">🟥</button>
+
+<div class="row">
+<button class="gold" onclick="card(1,'🟨 AMARILLA')">🟨</button>
+<button class="red" onclick="card(1,'🟥 ROJA')">🟥</button>
 </div>
 </div>
 
 <div class="stat">
 <b id="cardAwayName">RIVAL</b>
-<div>
-<button class="gold" onclick="card(0,'🟨')">🟨</button>
-<button class="red" onclick="card(0,'🟥')">🟥</button>
-</div>
+
+<div class="row">
+<button class="gold" onclick="card(0,'🟨 AMARILLA')">🟨</button>
+<button class="red" onclick="card(0,'🟥 ROJA')">🟥</button>
 </div>
 </div>
 
+</div>
+
+
+<!-- JUGADORES -->
 <div class="card">
+
 <h3>👥 JUGADORES</h3>
-<div id="players"></div>
-<button class="gold" style="width:100%" onclick="addPlayer()">+ AÑADIR JUGADOR</button>
+
+<div id="players">
+<div class="empty">No hay jugadores añadidos.</div>
 </div>
 
+<button class="gold" style="width:100%;margin-top:8px" onclick="addPlayer()">
++ AÑADIR JUGADOR
+</button>
+
+</div>
+
+
+<!-- INCIDENCIAS -->
 <div class="card">
+
 <h3>📋 INCIDENCIAS</h3>
-<div id="events"><div class="small">Todavía no hay incidencias.</div></div>
+
+<div id="events">
+<div class="small">Todavía no hay incidencias.</div>
 </div>
 
 </div>
+
+</div>
+
 
 <script>
-let hg=0,ag=0,hf=0,af=0;
+
+let hg=0;
+let ag=0;
+
+let hf=0;
+let af=0;
+
 let seconds=1200;
 let running=false;
 let timer=null;
+
 let players=[];
 
-function startMatch(){
- document.getElementById('homeTitle').textContent=document.getElementById('homeName').value||'CIEZA FS';
- document.getElementById('awayTitle').textContent=document.getElementById('awayName').value||'RIVAL';
- document.getElementById('homeTitle2').textContent=document.getElementById('homeTitle').textContent;
- document.getElementById('awayTitle2').textContent=document.getElementById('awayTitle').textContent;
- document.getElementById('cardHomeName').textContent=document.getElementById('homeTitle').textContent;
- document.getElementById('cardAwayName').textContent=document.getElementById('awayTitle').textContent;
- addEvent('🏟️ Partido iniciado');
+
+/* NOMBRES */
+
+function homeName(){
+ return document.getElementById('homeTitle').textContent;
 }
+
+function awayName(){
+ return document.getElementById('awayTitle').textContent;
+}
+
+
+/* INICIAR PARTIDO */
+
+function startMatch(){
+
+ let home=document.getElementById('homeName').value.trim();
+ let away=document.getElementById('awayName').value.trim();
+
+ if(!home) home='CIEZA FS';
+ if(!away) away='RIVAL';
+
+ document.getElementById('homeTitle').textContent=home;
+ document.getElementById('awayTitle').textContent=away;
+
+ document.getElementById('homeTitle2').textContent=home;
+ document.getElementById('awayTitle2').textContent=away;
+
+ document.getElementById('cardHomeName').textContent=home;
+ document.getElementById('cardAwayName').textContent=away;
+
+ addEvent('🏟️ PARTIDO INICIADO');
+
+}
+
+
+/* CRONÓMETRO */
 
 function fmt(){
+
  let m=Math.floor(seconds/60);
  let s=seconds%60;
+
  document.getElementById('clock').textContent=
- String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+ String(m).padStart(2,'0')+':'+
+ String(s).padStart(2,'0');
+
 }
+
 
 function toggleClock(){
- running=!running;
- document.getElementById('clockBtn').textContent=running?'⏸ PAUSAR':'▶ CONTINUAR';
 
  if(running){
-  timer=setInterval(()=>{
-   if(seconds>0){seconds--;fmt();}
-   else{running=false;clearInterval(timer);addEvent('⏱️ FIN DEL TIEMPO');}
+
+  running=false;
+  clearInterval(timer);
+
+  document.getElementById('clockBtn').textContent='▶ CONTINUAR';
+
+  addEvent('⏸️ Cronómetro pausado');
+
+ }else{
+
+  running=true;
+
+  document.getElementById('clockBtn').textContent='⏸ PAUSAR';
+
+  timer=setInterval(function(){
+
+   if(seconds>0){
+
+    seconds--;
+    fmt();
+
+   }else{
+
+    running=false;
+    clearInterval(timer);
+
+    document.getElementById('clockBtn').textContent='▶ CONTINUAR';
+
+    addEvent('⏱️ FIN DEL TIEMPO');
+
+   }
+
   },1000);
- }else clearInterval(timer);
+
+ }
+
 }
+
 
 function resetClock(){
+
  running=false;
  clearInterval(timer);
+
  seconds=1200;
+
  fmt();
+
  document.getElementById('clockBtn').textContent='▶ INICIAR';
+
+ addEvent('↺ Cronómetro reiniciado');
+
 }
+
+
+/* GOLES */
 
 function goal(home){
+
  if(home){
+
   hg++;
+
   document.getElementById('homeGoals').textContent=hg;
-  addEvent('⚽ GOL '+document.getElementById('homeTitle').textContent);
+
+  addEvent(
+   '⚽ GOL '+homeName()+
+   ' — '+hg+'-'+ag
+  );
+
  }else{
+
   ag++;
+
   document.getElementById('awayGoals').textContent=ag;
-  addEvent('⚽ GOL '+document.getElementById('awayTitle').textContent);
+
+  addEvent(
+   '⚽ GOL '+awayName()+
+   ' — '+hg+'-'+ag
+  );
+
  }
+
 }
 
-function foul(home){
+
+/* RESTAR GOL */
+
+function removeGoal(home){
+
  if(home){
-  hf=Math.max(0,hf+(event.currentTarget.textContent==='+1'?1:-1));
-  document.getElementById('homeFouls').textContent=hf;
+
+  if(hg===0)return;
+
+  hg--;
+
+  document.getElementById('homeGoals').textContent=hg;
+
+  addEvent(
+   '↩️ GOL CORREGIDO '+homeName()+
+   ' — '+hg+'-'+ag
+  );
+
  }else{
-  af=Math.max(0,af+(event.currentTarget.textContent==='+1'?1:-1));
-  document.getElementById('awayFouls').textContent=af;
+
+  if(ag===0)return;
+
+  ag--;
+
+  document.getElementById('awayGoals').textContent=ag;
+
+  addEvent(
+   '↩️ GOL CORREGIDO '+awayName()+
+   ' — '+hg+'-'+ag
+  );
+
  }
+
 }
+
+
+/* FALTAS */
+
+function foul(home,amount){
+
+ if(home){
+
+  hf=Math.max(0,hf+amount);
+
+  document.getElementById('homeFouls').textContent=hf;
+
+  updateFoulBox(1);
+
+  if(amount>0){
+
+   addEvent(
+    '🚨 FALTA '+homeName()+
+    ' — '+hf+' acumuladas'
+   );
+
+  }
+
+ }else{
+
+  af=Math.max(0,af+amount);
+
+  document.getElementById('awayFouls').textContent=af;
+
+  updateFoulBox(0);
+
+  if(amount>0){
+
+   addEvent(
+    '🚨 FALTA '+awayName()+
+    ' — '+af+' acumuladas'
+   );
+
+  }
+
+ }
+
+}
+
+
+/* AVISO 5 FALTAS */
+
+function updateFoulBox(home){
+
+ let number=home?hf:af;
+
+ let box=document.getElementById(
+  home?'homeFoulBox':'awayFoulBox'
+ );
+
+ let warning=document.getElementById(
+  home?'homeWarning':'awayWarning'
+ );
+
+ box.classList.remove('warning');
+ box.classList.remove('danger');
+
+ warning.textContent='';
+
+ if(number>=6){
+
+  box.classList.add('danger');
+
+  warning.textContent='🟥 '+number+
+  ' FALTAS — SITUACIÓN DE DOBLE PENALTI';
+
+ }else if(number===5){
+
+  box.classList.add('warning');
+
+  warning.textContent='⚠️ 5 FALTAS — PRÓXIMA FALTA: DOBLE PENALTI';
+
+ }
+
+}
+
+
+/* TARJETAS */
 
 function card(home,type){
- addEvent(type+' '+(home?
- document.getElementById('homeTitle').textContent:
- document.getElementById('awayTitle').textContent));
+
+ let team=home?homeName():awayName();
+
+ addEvent(type+' — '+team);
+
 }
+
+
+/* INCIDENCIAS */
 
 function addEvent(text){
+
  let box=document.getElementById('events');
- if(box.querySelector('.small')) box.innerHTML='';
+
+ if(box.querySelector('.small')){
+
+  box.innerHTML='';
+
+ }
+
  let d=document.createElement('div');
+
  d.className='event';
- d.textContent=document.getElementById('clock').textContent+' · '+text;
+
+ d.textContent=
+ document.getElementById('clock').textContent+
+ ' · '+text;
+
  box.prepend(d);
+
 }
+
+
+/* JUGADORES */
 
 function addPlayer(){
+
  let name=prompt('Nombre del jugador');
+
  if(!name)return;
+
+ name=name.trim();
+
+ if(!name)return;
+
  players.push(name);
+
  renderPlayers();
+
 }
+
 
 function renderPlayers(){
- document.getElementById('players').innerHTML=players.map((p,i)=>
- `<div class="player">
- <span><span class="badge">${i+1}</span> ${p}</span>
- <button class="dark" onclick="players.splice(${i},1);renderPlayers()">✕</button>
- </div>`
- ).join('');
+
+ let box=document.getElementById('players');
+
+ if(players.length===0){
+
+  box.innerHTML=
+  '<div class="empty">No hay jugadores añadidos.</div>';
+
+  return;
+
+ }
+
+ box.innerHTML=players.map(function(p,i){
+
+  return `
+  <div class="player">
+
+   <span>
+    <span class="badge">${i+1}</span>
+    ${escapeHTML(p)}
+   </span>
+
+   <button class="dark"
+    onclick="removePlayer(${i})">
+    ✕
+   </button>
+
+  </div>`;
+
+ }).join('');
+
 }
 
+
+function removePlayer(index){
+
+ players.splice(index,1);
+
+ renderPlayers();
+
+}
+
+
+/* SEGURIDAD PARA NOMBRES */
+
+function escapeHTML(text){
+
+ return text
+ .replace(/&/g,'&amp;')
+ .replace(/</g,'&lt;')
+ .replace(/>/g,'&gt;')
+ .replace(/"/g,'&quot;')
+ .replace(/'/g,'&#039;');
+
+}
+
+
 fmt();
+
 </script>
 
 </body>
