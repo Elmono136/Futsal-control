@@ -1360,3 +1360,631 @@ renderTeam(1,"homePlayers");
 renderTeam(0,"awayPlayers");
 
 }
+
+
+function renderTeam(team,id){
+
+let box=document.getElementById(id);
+
+box.innerHTML="";
+
+let list=[];
+
+players.forEach(function(player,index){
+
+if(player.team===team){
+
+list.push({
+player:player,
+index:index
+});
+
+}
+
+});
+
+if(list.length===0){
+
+box.innerHTML=
+'<div class="small">No hay jugadores.</div>';
+
+return;
+
+}
+
+list.forEach(function(item){
+
+let p=item.player;
+let i=item.index;
+
+let statusClass="off";
+let statusText="⚪ BANQUILLO";
+
+if(p.expelled){
+
+statusClass="out";
+statusText="🟥 EXPULSADO";
+
+}else if(p.onCourt){
+
+statusClass="on";
+statusText="🟢 EN PISTA";
+
+}
+
+let div=document.createElement("div");
+
+div.className="player";
+
+div.innerHTML=
+
+'<div class="playerTop">'+
+
+'<div class="playerName">'+
+
+'<span class="number">'+
+escapeHTML(p.number)+
+'</span>'+
+
+'<span>'+
+escapeHTML(p.name)+
+'</span>'+
+
+'</div>'+
+
+'<span class="status '+statusClass+'">'+
+statusText+
+'</span>'+
+
+'</div>'+
+
+'<div class="playerStats">'+
+
+'<div class="pstat"><b>'+
+p.goals+
+'</b>⚽</div>'+
+
+'<div class="pstat"><b>'+
+p.yellow+
+'</b>🟨</div>'+
+
+'<div class="pstat"><b>'+
+p.red+
+'</b>🟥</div>'+
+
+'<div class="pstat"><b>'+
+p.fouls+
+'</b>🚨</div>'+
+
+'<div class="pstat"><b>'+
+formatTime(p.seconds)+
+'</b>⏱️</div>'+
+
+'</div>'+
+
+'<div class="playerActions">'+
+
+(
+p.expelled
+?
+'<button class="dark" disabled>🚫 EXPULSADO</button>'
+:
+'<button class="blue" onclick="togglePlayer('+i+')">'+
+(p.onCourt?"↩️ SACAR":"🟢 METER")+
+'</button>'
+)+
+
+'<button class="dark" onclick="deletePlayer('+i+')">'+
+'✕ ELIMINAR'+
+'</button>'+
+
+'</div>';
+
+box.appendChild(div);
+
+});
+
+}
+
+
+/* =========================
+MODALES
+========================= */
+
+function openTeamModal(title){
+
+document.getElementById("modalTitle").textContent=title;
+
+document.getElementById("modalContent").innerHTML=
+
+'<button class="gold" onclick="chooseCardTeam(1)">🔵 '+
+escapeHTML(teamName(1))+
+'</button>'+
+
+'<button class="red" onclick="chooseCardTeam(0)">🔴 '+
+escapeHTML(teamName(0))+
+'</button>';
+
+document.getElementById("modal").style.display="flex";
+
+}
+
+
+function openPlayerModal(team,title){
+
+document.getElementById("modalTitle").textContent=title;
+
+let box=document.getElementById("modalContent");
+
+box.innerHTML="";
+
+let list=players.filter(function(p){
+
+return p.team===team&&!p.expelled;
+
+});
+
+if(list.length===0){
+
+box.innerHTML=
+'<div class="small">No hay jugadores disponibles.</div>';
+
+document.getElementById("modal").style.display="flex";
+
+return;
+
+}
+
+list.forEach(function(player){
+
+let button=document.createElement("button");
+
+button.innerHTML=
+"№ "+
+escapeHTML(player.number)+
+" · "+
+escapeHTML(player.name);
+
+button.onclick=function(){
+
+if(action.type==="goal"){
+confirmGoal(player);
+}
+else if(action.type==="foul"){
+confirmFoul(player);
+}
+else{
+confirmCard(player);
+}
+
+};
+
+box.appendChild(button);
+
+});
+
+document.getElementById("modal").style.display="flex";
+
+}
+
+
+function closeModal(){
+
+document.getElementById("modal").style.display="none";
+action=null;
+
+}
+
+
+/* =========================
+INCIDENCIAS
+========================= */
+
+function addEvent(text){
+
+let box=document.getElementById("events");
+
+if(
+box.innerHTML.trim()===""||
+box.querySelector(".small")
+){
+box.innerHTML="";
+}
+
+let event=document.createElement("div");
+
+event.className="event";
+
+event.textContent=
+(period===1?"1ª PARTE":"2ª PARTE")+
+" · "+
+formatTime(seconds)+
+" · "+
+text;
+
+box.prepend(event);
+
+}
+
+
+/* =========================
+RESUMEN
+========================= */
+
+function generateSummary(){
+
+let html=
+
+'<div class="final">'+
+'⚽ '+
+escapeHTML(teamName(1))+
+' '+
+homeGoals+
+' - '+
+awayGoals+
+' '+
+escapeHTML(teamName(0))+
+'</div>';
+
+
+html+="<h4>⚽ GOLEADORES</h4>";
+
+let scorers=players.filter(function(p){
+return p.goals>0;
+});
+
+if(!scorers.length){
+
+html+='<div class="small">Sin goleadores registrados.</div>';
+
+}else{
+
+scorers.forEach(function(p){
+
+html+=
+'<div class="event">'+
+'#'+escapeHTML(p.number)+
+' '+
+escapeHTML(p.name)+
+' · '+
+p.goals+
+' gol(es)'+
+'</div>';
+
+});
+
+}
+
+
+html+="<h4>🟨🟥 TARJETAS</h4>";
+
+let cards=players.filter(function(p){
+return p.yellow>0||p.red>0;
+});
+
+if(!cards.length){
+
+html+='<div class="small">Sin tarjetas.</div>';
+
+}else{
+
+cards.forEach(function(p){
+
+let txt="";
+
+for(let i=0;i<p.yellow;i++){
+txt+="🟨";
+}
+
+if(p.red){
+txt+=" 🟥";
+}
+
+html+=
+'<div class="event">'+
+'#'+escapeHTML(p.number)+
+' '+
+escapeHTML(p.name)+
+' · '+
+txt+
+'</div>';
+
+});
+
+}
+
+
+/*
+FALTAS POR PARTE
+*/
+
+html+="<h4>🚨 FALTAS</h4>";
+
+html+=
+'<div class="event">'+
+'<b>1ª PARTE</b><br>'+
+escapeHTML(teamName(1))+": "+
+periodFouls[1].home+
+" · "+
+escapeHTML(teamName(0))+": "+
+periodFouls[1].away+
+'</div>';
+
+html+=
+'<div class="event">'+
+'<b>2ª PARTE</b><br>'+
+escapeHTML(teamName(1))+": "+
+periodFouls[2].home+
+" · "+
+escapeHTML(teamName(0))+": "+
+periodFouls[2].away+
+'</div>';
+
+
+/*
+TIEMPO DE JUGADORES
+*/
+
+html+="<h4>⏱️ MINUTOS JUGADOS</h4>";
+
+players.forEach(function(p){
+
+html+=
+'<div class="event">'+
+'#'+escapeHTML(p.number)+
+' '+
+escapeHTML(p.name)+
+' · '+
+formatTime(p.seconds)+
+'</div>';
+
+});
+
+
+/*
+INCIDENCIAS
+*/
+
+html+="<h4>📋 INCIDENCIAS</h4>";
+
+let events=
+Array.from(
+document.querySelectorAll("#events .event")
+);
+
+events.reverse().forEach(function(e){
+
+html+=
+'<div class="event">'+
+escapeHTML(e.textContent)+
+'</div>';
+
+});
+
+
+/*
+BOTÓN COMPARTIR
+*/
+
+html+=
+'<button class="share" onclick="shareStatistics()">'+
+'📤 COMPARTIR ESTADÍSTICAS'+
+'</button>';
+
+document.getElementById("summary").innerHTML=html;
+
+}
+
+
+/* =========================
+CREAR TEXTO PARA COMPARTIR
+========================= */
+
+function createShareText(){
+
+let text="⚽ FUTSAL CONTROL\n\n";
+
+text+="🏁 "+
+teamName(1)+
+" "+
+homeGoals+
+" - "+
+awayGoals+
+" "+
+teamName(0)+
+"\n\n";
+
+
+text+="⚽ GOLEADORES\n";
+
+let scorers=players.filter(function(p){
+return p.goals>0;
+});
+
+if(!scorers.length){
+
+text+="Sin goleadores registrados.\n";
+
+}else{
+
+scorers.forEach(function(p){
+
+text+="#"+
+p.number+
+" "+
+p.name+
+" · "+
+p.goals+
+" gol(es)\n";
+
+});
+
+}
+
+
+text+="\n🟨🟥 TARJETAS\n";
+
+let cards=players.filter(function(p){
+return p.yellow>0||p.red>0;
+});
+
+if(!cards.length){
+
+text+="Sin tarjetas.\n";
+
+}else{
+
+cards.forEach(function(p){
+
+let cardsText="";
+
+for(let i=0;i<p.yellow;i++){
+cardsText+="🟨";
+}
+
+if(p.red){
+cardsText+=" 🟥";
+}
+
+text+="#"+
+p.number+
+" "+
+p.name+
+" · "+
+cardsText+
+"\n";
+
+});
+
+}
+
+
+text+="\n🚨 FALTAS\n";
+
+text+="1ª PARTE · "+
+teamName(1)+
+": "+
+periodFouls[1].home+
+" · "+
+teamName(0)+
+": "+
+periodFouls[1].away+
+"\n";
+
+text+="2ª PARTE · "+
+teamName(1)+
+": "+
+periodFouls[2].home+
+" · "+
+teamName(0)+
+": "+
+periodFouls[2].away+
+"\n";
+
+
+text+="\n⏱️ MINUTOS JUGADOS\n";
+
+players.forEach(function(p){
+
+text+="#"+
+p.number+
+" "+
+p.name+
+" · "+
+formatTime(p.seconds)+
+"\n";
+
+});
+
+
+text+="\n📋 INCIDENCIAS\n";
+
+let events=
+Array.from(
+document.querySelectorAll("#events .event")
+);
+
+events.reverse().forEach(function(e){
+
+text+=e.textContent+"\n";
+
+});
+
+
+text+="\n⚽ Futsal Control";
+
+return text;
+
+}
+
+
+/* =========================
+COMPARTIR
+========================= */
+
+async function shareStatistics(){
+
+let text=createShareText();
+
+if(navigator.share){
+
+try{
+
+await navigator.share({
+
+title:"Futsal Control · Estadísticas",
+text:text
+
+});
+
+}catch(e){}
+
+}else{
+
+try{
+
+await navigator.clipboard.writeText(text);
+
+alert(
+"📋 Estadísticas copiadas al portapapeles.\n\n"+
+"Ahora puedes pegarlas en WhatsApp, Telegram, etc."
+);
+
+}catch(e){
+
+prompt(
+"Copia las estadísticas:",
+text
+);
+
+}
+
+}
+
+}
+
+
+/* =========================
+INICIO
+========================= */
+
+document.getElementById("clockModeSelect")
+.addEventListener("change",function(){
+
+let runningMode=this.value==="running";
+
+document.getElementById("modeText").textContent=
+runningMode
+?"🟢 RELOJ CORRIDO"
+:"🔴 RELOJ PARADO";
+
+});
+
+
+updateClock();
+renderPlayers();
+
+</script>
+
+</body>
+</html>
