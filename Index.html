@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Futsal Control</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:white;font-family:Arial,sans-serif}
+header{padding:16px;text-align:center;background:#151515;border-bottom:2px solid #d9aa32}
+h1{margin:0;color:#e5b638}
+.logo{font-size:42px}
+.container{padding:12px;max-width:600px;margin:auto}
+.card{background:#151515;border-radius:14px;padding:14px;margin-bottom:12px}
+label{display:block;color:#aaa;font-size:13px;margin-bottom:5px}
+input{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#222;color:white;font-size:16px}
+button{border:0;border-radius:10px;padding:13px 15px;font-weight:bold;font-size:15px;cursor:pointer}
+.gold{background:#e5b638;color:#111}
+.red{background:#a51e2b;color:white}
+.blue{background:#1769aa;color:white}
+.dark{background:#292929;color:white}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1}
+.score{display:flex;justify-content:space-around;text-align:center;align-items:center}
+.team{font-size:17px;font-weight:bold}
+.goals{font-size:55px;font-weight:900}
+.clock{text-align:center;font-size:64px;font-weight:900;color:#e5b638;margin:5px}
+.center{text-align:center}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #333}
+.event{padding:8px;background:#222;border-radius:8px;margin:5px 0}
+.player{display:flex;justify-content:space-between;align-items:center;background:#222;padding:10px;border-radius:9px;margin:5px 0}
+.badge{background:#e5b638;color:#111;border-radius:50%;padding:5px 8px;font-weight:bold}
+.small{font-size:12px;color:#aaa}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">⚽</div>
+<h1>FUTSAL CONTROL</h1>
+<div class="small">Control de partidos de fútbol sala</div>
+</header>
+
+<div class="container">
+
+<div class="card">
+<label>Tu equipo</label>
+<input id="homeName" value="CIEZA FS">
+<br><br>
+<label>Rival</label>
+<input id="awayName" value="RIVAL">
+<br><br>
+<button class="gold" style="width:100%" onclick="startMatch()">EMPEZAR PARTIDO</button>
+</div>
+
+<div class="card">
+<div class="clock" id="clock">20:00</div>
+
+<div class="score">
+<div>
+<div class="team" id="homeTitle">CIEZA FS</div>
+<div class="goals" id="homeGoals">0</div>
+<button class="gold" onclick="goal(1)">⚽ GOL</button>
+</div>
+
+<div style="font-size:25px">—</div>
+
+<div>
+<div class="team" id="awayTitle">RIVAL</div>
+<div class="goals" id="awayGoals">0</div>
+<button class="red" onclick="goal(0)">⚽ GOL</button>
+</div>
+</div>
+
+<br>
+
+<div class="row">
+<button class="blue" onclick="toggleClock()" id="clockBtn">▶ INICIAR</button>
+<button class="dark" onclick="resetClock()">↺ REINICIAR</button>
+</div>
+</div>
+
+<div class="card">
+<h3>🚨 FALTAS</h3>
+
+<div class="stat">
+<b id="homeTitle2">CIEZA FS</b>
+<div>
+<button class="dark" onclick="foul(1)">−</button>
+<span id="homeFouls" style="font-size:24px;margin:10px">0</span>
+<button class="gold" onclick="foul(1)">+1</button>
+</div>
+</div>
+
+<div class="stat">
+<b id="awayTitle2">RIVAL</b>
+<div>
+<button class="dark" onclick="foul(0)">−</button>
+<span id="awayFouls" style="font-size:24px;margin:10px">0</span>
+<button class="red" onclick="foul(0)">+1</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>🟨🟥 TARJETAS</h3>
+
+<div class="stat">
+<b id="cardHomeName">CIEZA FS</b>
+<div>
+<button class="gold" onclick="card(1,'🟨')">🟨</button>
+<button class="red" onclick="card(1,'🟥')">🟥</button>
+</div>
+</div>
+
+<div class="stat">
+<b id="cardAwayName">RIVAL</b>
+<div>
+<button class="gold" onclick="card(0,'🟨')">🟨</button>
+<button class="red" onclick="card(0,'🟥')">🟥</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>👥 JUGADORES</h3>
+<div id="players"></div>
+<button class="gold" style="width:100%" onclick="addPlayer()">+ AÑADIR JUGADOR</button>
+</div>
+
+<div class="card">
+<h3>📋 INCIDENCIAS</h3>
+<div id="events"><div class="small">Todavía no hay incidencias.</div></div>
+</div>
+
+</div>
+
+<script>
+let hg=0,ag=0,hf=0,af=0;
+let seconds=1200;
+let running=false;
+let timer=null;
+let players=[];
+
+function startMatch(){
+ document.getElementById('homeTitle').textContent=document.getElementById('homeName').value||'CIEZA FS';
+ document.getElementById('awayTitle').textContent=document.getElementById('awayName').value||'RIVAL';
+ document.getElementById('homeTitle2').textContent=document.getElementById('homeTitle').textContent;
+ document.getElementById('awayTitle2').textContent=document.getElementById('awayTitle').textContent;
+ document.getElementById('cardHomeName').textContent=document.getElementById('homeTitle').textContent;
+ document.getElementById('cardAwayName').textContent=document.getElementById('awayTitle').textContent;
+ addEvent('🏟️ Partido iniciado');
+}
+
+function fmt(){
+ let m=Math.floor(seconds/60);
+ let s=seconds%60;
+ document.getElementById('clock').textContent=
+ String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+function toggleClock(){
+ running=!running;
+ document.getElementById('clockBtn').textContent=running?'⏸ PAUSAR':'▶ CONTINUAR';
+
+ if(running){
+  timer=setInterval(()=>{
+   if(seconds>0){seconds--;fmt();}
+   else{running=false;clearInterval(timer);addEvent('⏱️ FIN DEL TIEMPO');}
+  },1000);
+ }else clearInterval(timer);
+}
+
+function resetClock(){
+ running=false;
+ clearInterval(timer);
+ seconds=1200;
+ fmt();
+ document.getElementById('clockBtn').textContent='▶ INICIAR';
+}
+
+function goal(home){
+ if(home){
+  hg++;
+  document.getElementById('homeGoals').textContent=hg;
+  addEvent('⚽ GOL '+document.getElementById('homeTitle').textContent);
+ }else{
+  ag++;
+  document.getElementById('awayGoals').textContent=ag;
+  addEvent('⚽ GOL '+document.getElementById('awayTitle').textContent);
+ }
+}
+
+function foul(home){
+ if(home){
+  hf=Math.max(0,hf+(event.currentTarget.textContent==='+1'?1:-1));
+  document.getElementById('homeFouls').textContent=hf;
+ }else{
+  af=Math.max(0,af+(event.currentTarget.textContent==='+1'?1:-1));
+  document.getElementById('awayFouls').textContent=af;
+ }
+}
+
+function card(home,type){
+ addEvent(type+' '+(home?
+ document.getElementById('homeTitle').textContent:
+ document.getElementById('awayTitle').textContent));
+}
+
+function addEvent(text){
+ let box=document.getElementById('events');
+ if(box.querySelector('.small')) box.innerHTML='';
+ let d=document.createElement('div');
+ d.className='event';
+ d.textContent=document.getElementById('clock').textContent+' · '+text;
+ box.prepend(d);
+}
+
+function addPlayer(){
+ let name=prompt('Nombre del jugador');
+ if(!name)return;
+ players.push(name);
+ renderPlayers();
+}
+
+function renderPlayers(){
+ document.getElementById('players').innerHTML=players.map((p,i)=>
+ `<div class="player">
+ <span><span class="badge">${i+1}</span> ${p}</span>
+ <button class="dark" onclick="players.splice(${i},1);renderPlayers()">✕</button>
+ </div>`
+ ).join('');
+}
+
+fmt();
+</script>
+
+</body>
+</html>
